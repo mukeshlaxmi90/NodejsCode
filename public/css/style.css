@@ -1,0 +1,82 @@
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    /* Top Header */
+    header {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    /* User Icon & Dropdown */
+    .user-menu {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .user-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e74c3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 50px; /* below the icon */
+      right: 0;
+      background-color: white;
+      color: black;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: none;
+      min-width: 120px;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: black;
+    }
+
+    .dropdown a:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 20px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #2c3e50;
+      color: white;
+      padding: 10px 20px;
+      text-align: right;
+    }

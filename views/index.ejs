@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Top Header -->
+  <header>
+    <h2>Welcome,🎉</h2>
+    <div class="user-menu" id="userMenu">
+      <div class="user-icon"></div>
+      <div class="dropdown" id="dropdownMenu">
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </header>
+  <!-- Main Content -->
+  <main>  
+ <a href="/UDashboard">upag</a>
+    <p>You are successfully logged in.</p>
+  </main>
+  <!-- Footer -->
+  <footer>
+    Logged in as
+  </footer>
+
+  <script>
+    window.onload = function() {
+      // Toggle dropdown on user icon click
+      const userMenu = document.getElementById('userMenu');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      userMenu.addEventListener('click', function(event) {
+        event.stopPropagation();
+        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+      });
+
+      // Close dropdown if clicked outside
+      document.addEventListener('click', function() {
+        dropdownMenu.style.display = 'none';
+      });
+    }
+  </script>
+
+</body>
+</html>
