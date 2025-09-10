@@ -1,0 +1,83 @@
+ <style>
+    .charts {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    #pieChart, #barChart {
+      width: 48%;
+      height: 400px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 10px;
+    }
+  </style>     
+ <section class="charts">
+    <div id="pieChart"></div>
+    <div id="barChart"></div>
+  </section>
+  <script>
+    // 👉 All dashboard data in one variable
+    const dashboardData = {
+      metrics: {
+        successRate: 92,
+        efficiency: 88,
+        accuracy: 75,
+        coverage: 67
+      },
+      salesByCategory: [
+        { name: "Electronics", y: 45 },
+        { name: "Fashion", y: 25 },
+        { name: "Grocery", y: 15 },
+        { name: "Home Decor", y: 10 },
+        { name: "Other", y: 5 }
+      ],
+      userGrowth: [
+        { month: "Jan", users: 150 },
+        { month: "Feb", users: 200 },
+        { month: "Mar", users: 250 },
+        { month: "Apr", users: 300 },
+        { month: "May", users: 500 },
+        { month: "Jun", users: 400 }
+      ]
+    };   
+    // 👉 Pie Chart
+    Highcharts.chart('pieChart', {
+      chart: { type: 'pie', backgroundColor: 'transparent' },
+      title: { text: 'Sales by Category' },
+      colors: ['#42A5F5', '#7E57C2', '#66BB6A', '#FF7043', '#78909C'],
+      series: [{
+        name: 'Sales',
+        colorByPoint: true,
+        data: dashboardData.salesByCategory
+      }]
+    });
+
+    // 👉 Bar Chart
+    Highcharts.chart('barChart', {
+      chart: { type: 'column', backgroundColor: 'transparent' },
+      title: { text: 'User Growth' },
+      xAxis: {
+        categories: dashboardData.userGrowth.map(s => s.month),
+        crosshair: true
+      },
+      yAxis: {
+        min: 0,
+        title: { text: 'Users' }
+      },
+      plotOptions: {
+        column: {
+          borderRadius: 5,
+          pointPadding: 0.2,
+          borderWidth: 0
+        }
+      },
+      series: [{
+        name: 'New Users',
+        data: dashboardData.userGrowth.map(s => s.users),
+        color: '#42A5F5'
+      }]
+    });
+  </script>

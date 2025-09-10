@@ -1,0 +1,73 @@
+ <link rel="stylesheet" href="/css/widgets.css">
+<section class="metrics">
+    <div class="metric-card clickable" onclick="window.location.href='/UDashboard'">
+      <div class="metric-header">
+        <h2 id="successRate"></h2>
+        <i class="fas fa-trophy"></i>
+      </div>
+      <p class="metric-sub">Dasboard</p>
+      <div class="progress-bar"><div class="progress" id="successBar"></div></div>
+    </div>
+
+    <div class="metric-card clickable">
+      <div class="metric-header">
+        <h2 id="efficiency"></h2>
+        <i class="fas fa-bolt"></i>
+      </div>
+      <p class="metric-sub">Efficiency</p>
+      <div class="progress-bar"><div class="progress" id="efficiencyBar"></div></div>
+    </div>
+    <div class="metric-card clickable">
+      <div class="metric-header">
+        <h2 id="accuracy"></h2>
+        <i class="fas fa-bullseye"></i>
+      </div>
+      <p class="metric-sub">Accuracy</p>
+      <div class="progress-bar"><div class="progress" id="accuracyBar"></div></div>
+    </div>
+    <div class="metric-card clickable">
+      <div class="metric-header">
+        <h2 id="coverage"></h2>
+        <i class="fas fa-globe"></i>
+      </div>
+      <p class="metric-sub">Coverage</p>
+      <div class="progress-bar"><div class="progress" id="coverageBar"></div></div>
+    </div>    
+  </section>
+  <script>
+    const widgetData = {
+      metrics: {
+        successRate: 92,
+        efficiency: 88,
+        accuracy: 75,
+        coverage: 67
+      },
+      salesByCategory: [
+        { name: "Electronics", y: 45 },
+        { name: "Fashion", y: 25 },
+        { name: "Grocery", y: 15 },
+        { name: "Home Decor", y: 10 },
+        { name: "Other", y: 5 }
+      ],
+      userGrowth: [
+        { month: "Jan", users: 150 },
+        { month: "Feb", users: 200 },
+        { month: "Mar", users: 250 },
+        { month: "Apr", users: 300 },
+        { month: "May", users: 500 },
+        { month: "Jun", users: 400 }
+      ]
+    };
+     // 👉 Update metrics correctly
+    function updateMetric(value, textId, barId, color) {
+      document.getElementById(textId).innerText = value + "%";
+      const bar = document.getElementById(barId);
+      bar.style.width = value + "%";
+      bar.style.background = color;
+    }
+    updateMetric(widgetData.metrics.successRate, "successRate", "successBar", "linear-gradient(90deg,#ff9800,#ffeb3b)");
+    updateMetric(widgetData.metrics.efficiency, "efficiency", "efficiencyBar", "linear-gradient(90deg,#4caf50,#8bc34a)");
+    updateMetric(widgetData.metrics.accuracy, "accuracy", "accuracyBar", "linear-gradient(90deg,#2196f3,#03a9f4)");
+    updateMetric(widgetData.metrics.coverage, "coverage", "coverageBar", "linear-gradient(90deg,#9c27b0,#e040fb)");
+
+  </script>

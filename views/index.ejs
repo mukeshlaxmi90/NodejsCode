@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard</title>  
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Dashboard</title>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <!-- Top Header -->
-  <header>
+  <!-- Header -->
+   <header>
     <h2>Welcome,🎉</h2>
     <div class="user-menu" id="userMenu">
       <div class="user-icon"></div>
@@ -16,18 +18,16 @@
       </div>
     </div>
   </header>
-  <!-- Main Content -->
-  <main>  
- <a href="/UDashboard">upag</a>
-    <p>You are successfully logged in.</p>
-  </main>
+  <!-- Metrics Section -->
+  <%- include('widget') %>
+  <!-- Charts -->
+ <%- include('chart') %>
   <!-- Footer -->
   <footer>
-    Logged in as
+    Dashboard © 2025
   </footer>
-
   <script>
-    window.onload = function() {
+ window.onload = function() {
       // Toggle dropdown on user icon click
       const userMenu = document.getElementById('userMenu');
       const dropdownMenu = document.getElementById('dropdownMenu');
@@ -42,6 +42,5 @@
       });
     }
   </script>
-
 </body>
 </html>

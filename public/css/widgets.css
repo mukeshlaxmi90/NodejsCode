@@ -1,0 +1,61 @@
+.metrics {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px;
+    }
+
+   .metric-card {
+  background: #fff;
+  flex: 1;
+  margin: 0 10px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .metric-header i {
+      font-size: 24px;
+      color: #2196f3;
+    }
+
+    .metric-header h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .metric-sub {
+      margin: 0;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+.metric-card.clickable {
+  cursor: pointer;                 /* 👉 hand cursor */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card.clickable:hover {
+  transform: scale(1.03);          /* hover effect */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+    .progress-bar {
+      height: 10px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .progress {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
