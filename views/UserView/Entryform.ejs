@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transition Form</title>
-
   <link rel="stylesheet" href="/css/entryform.css">
   <link rel="stylesheet" href="/css/loader.css">
   <link rel="stylesheet" href="/css/toast.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <!-- Toast -->
@@ -16,7 +16,6 @@
       <%= message %>
     </div>
   <% } %>
-
 <form class="user-form" action="/users/save" method="POST" onsubmit="showLoader()">   
   <div class="header-box">
     <h3>Transition Form :-</h3>
@@ -63,15 +62,49 @@
 <button  class="submit-btn" id="saveBtn" type="submit">Save</button> 
 </form>
 <!-- JavaScript -->  
-<script src="/js/entryform.js"></script>
-<script>
-    window.onload = function() {
-      const toast = document.getElementById("toast");
-      if (toast) {
-        toast.classList.add("show");
-        setTimeout(() => { toast.classList.remove("show"); }, 3000);
+
+<!-- <script>
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("Script loaded ✅");
+
+  const toast = document.getElementById("toast");
+  if (toast) {
+    toast.classList.add("show");
+    setTimeout(() => { toast.classList.remove("show"); }, 3000);
+  }
+
+  const dobInput = document.getElementById("dob");
+  const ageInput = document.getElementById("age");
+
+  if (dobInput && ageInput) {
+    dobInput.addEventListener("change", function () {
+      console.log("DOB field changed:", this.value);
+      if (!this.value) {
+        ageInput.value = "";
+        return;
       }
-    };    
-  </script>
+
+      // YYYY-MM-DD → [YYYY, MM, DD]
+      const parts = this.value.split("-");
+      const dob = new Date(parts[0], parts[1] - 1, parts[2]);
+
+      if (!isNaN(dob)) {
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+          age--;
+        }
+
+        ageInput.value = age;
+      } else {
+        ageInput.value = "";
+      }
+    });
+  }
+});
+</script>  -->
+<script src="/js/entryform.js"></script>
 </body>
 </html>

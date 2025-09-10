@@ -43,10 +43,19 @@ document.querySelectorAll('.submenu a').forEach(link => {
     const page = link.getAttribute('data-page');
     if (!page) return;
 
-    fetch(`/page/${page}`)
+    fetch(`/page/${page.toLowerCase()}`)
       .then(res => res.text())
       .then(html => {
         mainContent.innerHTML = html;
+
+        // ✅ Agar page Dataview hai to initDataView() call karo
+        if (page.toLowerCase() === "dataview") {
+          if (typeof initDataView === "function") {
+            initDataView();
+          } else {
+            console.warn("initDataView() not found in dataview.js");
+          }
+        }
       })
       .catch(err => {
         mainContent.innerHTML = "<h2>Page not found</h2>";

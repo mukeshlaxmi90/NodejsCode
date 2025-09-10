@@ -5,6 +5,8 @@ const expressLayouts = require('express-ejs-layouts');
 const authRoutes = require('./routes/authRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 const entryRoutes = require('./routes/entryRoutes');
+const viewRoutes = require('./routes/viewRoutes');
+
 
 const app = express();
 
@@ -12,7 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use(session({
   secret: 'secret_key',
@@ -23,6 +24,7 @@ app.use(session({
 // EJS + layouts
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
 app.use(expressLayouts);
 app.set('layout', 'layout');
 console.log("mid",expressLayouts);
@@ -33,6 +35,7 @@ app.get('/', (req, res) => res.redirect('/login'));
 app.use(authRoutes);
 app.use('/', pageRoutes);  // index/dashboard
 app.use('/page', entryRoutes); // entry form
+app.use('/page', viewRoutes); 
 // Index / dashboard route
 
 //Submit ke liye route hai ye

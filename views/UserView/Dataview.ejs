@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Users Table</title>
+  <style>
+    h2 { text-align: center; margin-bottom: 20px; }
+    .search-box { margin-bottom: 15px; text-align: right; }
+    .search-box input {
+      padding: 8px; width: 250px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #4CAF50; color: white; position: sticky; top: 0; z-index: 2; }
+    tr:nth-child(even) { background: #f2f2f2; }
+    tr:hover { background: #eaf3ff; }
+    .no-data { text-align: center; font-style: italic; color: #666; }
+    th.sorted-asc::after { content: " ⬆️"; }
+    th.sorted-desc::after { content: " ⬇️"; }
+    th.dragging { opacity: 0.4; background: #f0f0f0;}
+ 
+  .top-bar {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between; /* left side buttons, right side search */
+    align-items: center;
+  }
+  .btn-group {
+    display: flex;
+    gap: 10px; /* buttons ke beech space */
+  }
+  .btn-group button {
+    padding: 8px 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .btn-group button:hover {
+    background: #45a049;
+  }
+  .top-bar input {
+    padding: 8px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+</head>
+<body>
+  <h2>Users List</h2>
+
+  <!-- Search box -->   
+  <div  class="top-bar">
+     <div class="btn-group">
+    <button onclick="downloadExcel()">⬇️ Download Excel</button>
+    <!-- <button onclick="downloadpdf()">⬇️ Download PDF</button>
+    <button onclick="alert('CSV download logic yaha dalna hai')">⬇️ Download CSV</button> -->
+  </div>
+    <input type="text" id="searchInput" placeholder="Search users...">
+  </div>
+  <table id="usersTable">
+    <thead>
+      <tr>
+        <% columns.forEach(function(col) { %>
+          <th><%= col %></th>
+        <% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (users.length > 0) { %>
+        <% users.forEach(function(user){ %>
+          <tr>
+            <% columns.forEach(function(col){ %>
+              <td><%= user[col] || "" %></td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr class="no-data"><td colspan="100%">No users found</td></tr>
+      <% } %>
+    </tbody>
+  </table> 
+  <!-- External JS file -->
+<script src="/js/dataview.js"></script>
+<script>
+async function downloadExcel() {
+  let table = document.getElementById("usersTable");
+  let workbook = new ExcelJS.Workbook();
+  let worksheet = workbook.addWorksheet("Users");
+
+  // 👉 Add header row
+  let headers = [];
+  table.querySelectorAll("thead th").forEach(th => headers.push(th.innerText));
+  worksheet.addRow(headers);
+
+  // 👉 Add table rows
+  table.querySelectorAll("tbody tr").forEach(tr => {
+    let rowData = [];
+    tr.querySelectorAll("td").forEach(td => rowData.push(td.innerText));
+    if(rowData.length > 0) worksheet.addRow(rowData);
+  });
+
+  // 👉 Style header
+  worksheet.getRow(1).eachCell(cell => {
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FF4CAF50' }  // Green
+    };
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } }; // White bold
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  });
+
+  // 👉 Auto filter (applies to all headers)
+  worksheet.autoFilter = {
+    from: { row: 1, column: 1 },
+    to: { row: 1, column: headers.length }
+  };
+  // 👉 Adjust column width
+  worksheet.columns.forEach(col => {
+    let maxLength = 10;
+    col.eachCell({ includeEmpty: true }, cell => {
+      maxLength = Math.max(maxLength, (cell.value ? cell.value.toString().length : 0));
+    });
+    col.width = maxLength + 2;
+  });
+  // 👉 Generate file & download
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buffer]), "users.xlsx");
+}
+</script>
+</body>
+</html>
