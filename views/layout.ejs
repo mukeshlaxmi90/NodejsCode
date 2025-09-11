@@ -20,5 +20,23 @@
   </div>
    <script src="/js/ucscript.js"></script>
   <script src="/js/loader.js"></script>  
+  <script>
+     (function() {
+      let logoutTimer;
+      function resetTimer() {
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(() => {
+          window.location.href = "/logout";
+        }, 60000); // 1 minute
+      }
+
+      // Detect activity
+      window.onload = resetTimer;
+      document.onmousemove = resetTimer;
+      document.onkeypress = resetTimer;
+      document.onclick = resetTimer;
+      document.onscroll = resetTimer;
+    })();
+  </script>
 </body>
 </html>

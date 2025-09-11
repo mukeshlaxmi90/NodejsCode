@@ -15,11 +15,21 @@ app.use(express.json());
 // STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-  secret: 'secret_key',
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(
+  session({
+    secret: "your_secret_key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60000}, // 1 min
+  })
+);
+// 🔒 Disable cache globally (moved UP)
+app.use((req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 // VIEW ENGINE
 // EJS + layouts
 app.set('view engine', 'ejs');
@@ -49,6 +59,17 @@ app.use('/users', entryRoutes);
 //     res.render('index', { user, title: "Dashboard" });
 // });
 // Root redirect
-app.get('/', (req, res) => res.redirect('/login'));
+
+// Logout
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.log(err);
+      return res.redirect('/');
+    }
+    res.clearCookie('connect.sid'); // session cookie clear
+    res.redirect('/login');
+  });
+});
 
 app.listen(5000, () => console.log('Server running on port 5000'));

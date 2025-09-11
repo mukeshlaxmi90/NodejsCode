@@ -4,24 +4,39 @@
   <meta charset="UTF-8">
   <title>Dashboard</title>
   <script src="https://code.highcharts.com/highcharts.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-    <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <link rel="stylesheet" href="/css/style.css">    
 </head>
 <body>
   <!-- Header -->
-   <header>
-    <h2>Welcome,🎉</h2>
-    <div class="user-menu" id="userMenu">
-      <div class="user-icon"></div>
-      <div class="dropdown" id="dropdownMenu">
-        <a href="/logout">Logout</a>
+  <header>     
+    <!-- Left Navigation -->
+    <nav class="nav">
+         <h2>Welcome, 🎉</h2>
+      <div class="nav-item">User        
+        <div class="dropdown">
+          <a href="/UDashboard">User Dasboard</a>          
+        </div>
+      </div>
+      <div class="nav-item">Contact</div>
+    </nav>
+    <!-- Right User Menu -->
+    <div class="user-menu">
+      <div class="user-icon">U</div>
+      <div class="user-dropdown">
+        <a href="/logout">🚪 Logout</a>
       </div>
     </div>
   </header>
+  <main>
+   
+  </main>
+
   <!-- Metrics Section -->
-  <%- include('widget') %>
+   <%- include('widget') %>-
   <!-- Charts -->
- <%- include('chart') %>
+    <%- include('chart') %>
+    <%- include('map') %>
   <!-- Footer -->
   <footer>
     Dashboard © 2025
@@ -41,6 +56,19 @@
         dropdownMenu.style.display = 'none';
       });
     }
+   // Jab user back/forward kare, to ye trigger hoga
+  window.addEventListener("pageshow", function (event) {
+    if (event.persisted) {
+      // Agar page cache se aya hai (back/forward), to logout
+      window.location.href = "/logout";
+    }
+  });
+  // Back/forward detect
+  window.addEventListener("popstate", function () {
+    window.location.href = "/logout";
+  });
+  // Ek dummy state push karna jaruri hai
+  history.pushState(null, null, location.href);
   </script>
 </body>
 </html>

@@ -1,5 +1,4 @@
-
-    body {
+body {
       font-family: Arial, sans-serif;
       margin: 0;
       display: flex;
@@ -10,13 +9,13 @@
 
     /* Top Header */
     header {
-      background-color: #3498db;
-      color: white;
+      background-color: #2b7a5b;
+      color: #f0f0f0;
       padding: 10px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
+      border-bottom: 1px solid #ddd;
     }
 
     header h2 {
@@ -24,7 +23,54 @@
       font-size: 20px;
     }
 
-    /* User Icon & Dropdown */
+    /* Nav Menu */
+    .nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-item {
+      position: relative;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-item:hover {
+      background-color: #ffcc00;
+       color: #333;   
+    }
+    /* Dropdown */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-top: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      min-width: 180px;
+      z-index: 1000;
+    }
+    .dropdown a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: black;
+      font-size: 14px;
+    }
+
+    .dropdown a:hover {
+       background-color: #ffcc00;  /* Blue background */
+       color: #333;      
+    }
+
+    /* Hover to show dropdown */
+    .nav-item:hover .dropdown {
+      display: block;
+    }
+
+    /* Right User Menu */
     .user-menu {
       position: relative;
       cursor: pointer;
@@ -38,38 +84,37 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      color: white;
       font-weight: bold;
       font-size: 18px;
     }
-    .dropdown {
+
+    .user-dropdown {
+      display: none;
       position: absolute;
-      top: 50px; /* below the icon */
+      top: 50px;
       right: 0;
       background-color: white;
-      color: black;
-      border-radius: 4px;
+      border: 1px solid #ddd;
+      min-width: 140px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      display: none;
-      min-width: 120px;
+      border-radius: 4px;
       z-index: 100;
-      overflow: hidden;
     }
 
-    .dropdown a {
+    .user-dropdown a {
       display: block;
       padding: 10px 15px;
       text-decoration: none;
       color: black;
     }
 
-    .dropdown a:hover {
+    .user-dropdown a:hover {
       background-color: #f0f0f0;
     }
 
-    /* Main Content */
-    main {
-      flex: 1;
-      padding: 20px;
+    .user-menu:hover .user-dropdown {
+      display: block;
     }
 
     /* Footer */
@@ -78,4 +123,5 @@
       color: white;
       padding: 10px 20px;
       text-align: center;
+      margin-top: auto;
     }
