@@ -2,13 +2,20 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
+
+const http = require('http');
+const { Server }= require('socket.io');
+
 const authRoutes = require('./routes/authRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 const entryRoutes = require('./routes/entryRoutes');
 const viewRoutes = require('./routes/viewRoutes');
-
+const locationRoutes =require('./routes/locationRoutes');
+const { console } = require('inspector');
 
 const app = express();
+const server = http.createServer(app);   // 🚀 Express को http server में wrap किया
+const io = new Server(server);           // 🚀 Socket.io attach किया
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -20,7 +27,7 @@ app.use(
     secret: "your_secret_key",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 60000}, // 1 min
+    cookie: { maxAge: 600000}, // 1 min
   })
 );
 // 🔒 Disable cache globally (moved UP)
@@ -50,15 +57,7 @@ app.use('/page', viewRoutes);
 
 //Submit ke liye route hai ye
 app.use('/users', entryRoutes);
-// app.get('/index', (req, res) => { 
-//     if (!req.session.user) {
-//         return res.redirect('/login'); // agar login nahi hua → login page
-//     }
-//     const user = req.session.user;
-//     console.log("us",user);
-//     res.render('index', { user, title: "Dashboard" });
-// });
-// Root redirect
+app.use("/api", locationRoutes );
 
 // Logout
 app.get('/logout', (req, res) => {
@@ -71,5 +70,20 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+// ------------------ SOCKET.IO ------------------
+let activeUsers = 0;
 
-app.listen(5000, () => console.log('Server running on port 5000'));
+io.on("connection", (socket) => {
+  activeUsers++;
+  io.emit("updateUsers", activeUsers); // सभी clients को भेजा
+ console.log("activq",activeUsers)
+  socket.on("disconnect", () => {
+    activeUsers--;
+    io.emit("updateUsers", activeUsers);
+    console.log("activ",activeUsers)
+  });
+
+});
+
+//app.listen(5000, () => console.log('Server running on port 5000'));
+server.listen(5000, () => console.log('Server + Socket.io running on port 5000'));

@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Leaflet Map Example</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <title>Leaflet Map Example</title>  
+   <link rel="stylesheet" href="/css/leaflet.css">
   <style>
     #map {
       height: 400px;
@@ -12,10 +12,9 @@
   </style>
 </head>
 <body>
-  <h2>🌍 My Location</h2>
+  <h2>🌍</h2>
   <div id="map"></div>
-
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="/js/leaflet.js"></script>
  <script>
   function showMap(lat, lon) {
     const map = L.map('map').setView([lat, lon], 13);
@@ -27,7 +26,7 @@
 
     // Marker (pehle default text, baad me update karenge)
     const marker = L.marker([lat, lon]).addTo(map)
-      .bindPopup("⏳ Fetching location...")
+      .bindPopup("⏳Fetching location...")
       .openPopup();
     // 👉 Reverse geocoding using Nominatim API
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
@@ -35,13 +34,25 @@
       .then(data => {
         if (data && data.display_name) {
           marker.setPopupContent(`📍 ${data.display_name}`);
-        } else {
-          marker.setPopupContent("📍 Location not found");
+         const address = data.display_name;
+          fetch("/api/save-location",{
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lat, lon, address })
+
+          })
+          .then(res => res.json())
+           .then(resp => console.log("✅ Saved to DB:", resp))
+           .catch(err => console.error("❌ Error saving:", err));
+        } 
+        else 
+        {
+          marker.setPopupContent("📍Location not found");
         }
       })
       .catch(err => {
         console.error(err);
-        marker.setPopupContent("📍 Location unavailable");
+        marker.setPopupContent("📍Location unavailable");
       });
   }
   document.addEventListener("DOMContentLoaded", () => {

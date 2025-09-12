@@ -1,74 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <script src="https://code.highcharts.com/highcharts.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
-    <link rel="stylesheet" href="/css/style.css">    
-</head>
-<body>
-  <!-- Header -->
-  <header>     
-    <!-- Left Navigation -->
-    <nav class="nav">
-         <h2>Welcome, 🎉</h2>
-      <div class="nav-item">User        
-        <div class="dropdown">
-          <a href="/UDashboard">User Dasboard</a>          
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body class="theme-light">
+    <!-- Header -->
+    <header>
+      <nav class="nav">
+        <h3>Welcome, 🎉</h3>
+        <div class="nav-item">User
+          <div class="dropdown">
+            <a href="/UDashboard">User Dashboard</a>
+          </div>
+        </div>
+        <div class="nav-item">Contact</div>
+      </nav>
+      <div class="active-users" style="margin-left: auto;margin-right: 19px;">
+        <h3>📊 Active Users: <span id="activeUsers">0</span></h3>
+      </div>
+      <div class="user-menu">
+        <div class="user-icon" id="userIcon"><i class="fas fa-user"></i></div>
+        <div class="user-dropdown" id="dropdownMenu">    
+          <a href="/logout">🚪 Logout</a>
         </div>
       </div>
-      <div class="nav-item">Contact</div>
-    </nav>
-    <!-- Right User Menu -->
-    <div class="user-menu">
-      <div class="user-icon">U</div>
-      <div class="user-dropdown">
-        <a href="/logout">🚪 Logout</a>
-      </div>
+    </header>
+    <!-- Floating Settings Icon -->
+  <div class="settings-icon" id="settingsIcon">
+      <i class="fas fa-cog"></i>
     </div>
-  </header>
-  <main>
-   
-  </main>
-
-  <!-- Metrics Section -->
-   <%- include('widget') %>-
-  <!-- Charts -->
-    <%- include('chart') %>
-    <%- include('map') %>
-  <!-- Footer -->
-  <footer>
-    Dashboard © 2025
-  </footer>
-  <script>
- window.onload = function() {
-      // Toggle dropdown on user icon click
-      const userMenu = document.getElementById('userMenu');
-      const dropdownMenu = document.getElementById('dropdownMenu');
-      userMenu.addEventListener('click', function(event) {
-        event.stopPropagation();
+    <div class="theme-options" id="settingsPanel">
+      <h3>Select Theme</h3>
+      <div class="theme-option theme-light" data-theme="theme-light" title="Light"></div>
+      <div class="theme-option theme-dark" data-theme="theme-dark" title="Dark"></div>
+      <div class="theme-option theme-blue" data-theme="theme-blue" title="Blue"></div>
+      <div class="theme-option theme-green" data-theme="theme-green" title="Green"></div>
+      <div class="theme-option theme-orange" data-theme="theme-orange" title="Orange"></div>
+      <div class="theme-option theme-purple" data-theme="theme-purple" title="Purple"></div>
+      <div class="theme-option theme-pink" data-theme="theme-pink" title="Pink"></div>
+      <div class="theme-option theme-yellow" data-theme="theme-yellow" title="Yellow"></div>
+      <div class="theme-option theme-cyan" data-theme="theme-cyan" title="Cyan"></div>
+      <div class="theme-option theme-red" data-theme="theme-red" title="Red"></div>
+    </div>
+    <main>
+      <%- include('widget') %>
+      <%- include('chart') %>
+      <%- include('map') %>
+    </main>
+    <footer>
+      Dashboard © 2025
+    </footer>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      socket.on("updateUsers", count => {
+        const activeSpan = document.getElementById("activeUsers");
+        if (activeSpan) activeSpan.innerText = count;
+      });
+      const userMenu = document.querySelector('.user-menu');
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      userMenu.addEventListener("click", e => {
+        e.stopPropagation();
         dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
       });
-
-      // Close dropdown if clicked outside
-      document.addEventListener('click', function() {
+      document.addEventListener("click", () => {
         dropdownMenu.style.display = 'none';
       });
-    }
-   // Jab user back/forward kare, to ye trigger hoga
-  window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      // Agar page cache se aya hai (back/forward), to logout
-      window.location.href = "/logout";
-    }
-  });
-  // Back/forward detect
-  window.addEventListener("popstate", function () {
-    window.location.href = "/logout";
-  });
-  // Ek dummy state push karna jaruri hai
-  history.pushState(null, null, location.href);
-  </script>
-</body>
-</html>
+      const settingsIcon = document.getElementById("settingsIcon");
+      const settingsPanel = document.getElementById("settingsPanel");
+
+      settingsIcon.addEventListener("click", e => {
+        e.stopPropagation();
+        settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+        settingsIcon.classList.toggle('active');
+      });
+
+      document.addEventListener("click", () => {
+        settingsPanel.style.display = 'none';
+        settingsIcon.classList.remove('active');
+      });
+
+      const themeOptions = document.querySelectorAll('.theme-option');
+      themeOptions.forEach(option => {
+        option.addEventListener('click', e => {
+          e.stopPropagation();
+          const selectedTheme = option.getAttribute('data-theme');
+          document.body.className = selectedTheme;
+          localStorage.setItem('selectedTheme', selectedTheme);
+
+          const themeColors = {
+            'theme-light': 'linear-gradient(45deg, #f4f4f4, #ccc)',
+            'theme-dark': 'linear-gradient(45deg, #1e1e1e, #333)',
+            'theme-blue': 'linear-gradient(45deg, #007bff, #0056b3)',
+            'theme-green': 'linear-gradient(45deg, #28a745, #1c7430)',
+            'theme-orange': 'linear-gradient(45deg, #fd7e14, #e8590c)',
+            'theme-purple': 'linear-gradient(45deg, #6f42c1, #5a32a3)',
+            'theme-pink': 'linear-gradient(45deg, #e83e8c, #c8236e)',
+            'theme-yellow': 'linear-gradient(45deg, #ffc107, #e0a800)',
+            'theme-cyan': 'linear-gradient(45deg, #17a2b8, #117a8b)',
+            'theme-red': 'linear-gradient(45deg, #dc3545, #a71d2a)'
+          };
+
+          settingsIcon.style.background = themeColors[selectedTheme];
+        });
+      });
+
+      window.addEventListener('load', () => {
+        const savedTheme = localStorage.getItem('selectedTheme') || 'theme-light';
+        document.body.className = savedTheme;
+
+        const themeColors = {
+          'theme-light': 'linear-gradient(45deg, #f4f4f4, #ccc)',
+          'theme-dark': 'linear-gradient(45deg, #1e1e1e, #333)',
+          'theme-blue': 'linear-gradient(45deg, #007bff, #0056b3)',
+          'theme-green': 'linear-gradient(45deg, #28a745, #1c7430)',
+          'theme-orange': 'linear-gradient(45deg, #fd7e14, #e8590c)',
+          'theme-purple': 'linear-gradient(45deg, #6f42c1, #5a32a3)',
+          'theme-pink': 'linear-gradient(45deg, #e83e8c, #c8236e)',
+          'theme-yellow': 'linear-gradient(45deg, #ffc107, #e0a800)',
+          'theme-cyan': 'linear-gradient(45deg, #17a2b8, #117a8b)',
+          'theme-red': 'linear-gradient(45deg, #dc3545, #a71d2a)'
+        };
+
+        settingsIcon.style.background = themeColors[savedTheme];
+      });
+
+      window.addEventListener("pageshow", e => {
+        if (e.persisted) window.location.href = "/logout";
+      });
+      window.addEventListener("popstate", () => {
+        window.location.href = "/logout";
+      });
+      history.pushState(null, null, location.href);
+    </script>
+
+  </body>
+  </html>
