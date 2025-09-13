@@ -4,7 +4,7 @@ const saveLocationController = async (req, res) => {
   console.log("L1");
   try {
     const { lat, lon, address } = req.body;
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;  // client IP
+    const ip = req.headers['x-forwarded-for']?.split(",")[0].trim() || req.socket.remoteAddress;  // client IP
     console.log("L2", lat, lon, address,ip);
        
     if (!lat || !lon || !address) {
