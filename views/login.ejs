@@ -2,61 +2,189 @@
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="/css/style.css">
     <style>
         body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(120deg, #2c5364, #203a43, #0f2027);
+            position: relative;
         }
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+    #welcome-container {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 2;
+}
+
+#welcome-wrapper {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 60px;
+  font-weight: bold;
+  animation: scroll 15s linear infinite, colorChange 20s linear infinite;
+}
+
+/* Left to right scroll */
+@keyframes scroll {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Color change animation */
+@keyframes colorChange {
+  0% { color: #ff4500; }
+  25% { color: #00ffff; }
+  50% { color: #ff00ff; }
+  75% { color: #ffff00; }
+  100% { color: #ff4500; }
+}
         .login-box {
-            background: white;
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.9);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            border-radius: 15px;
             width: 350px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
+
         .login-box h2 {
             text-align: center;
             margin-bottom: 20px;
+            color: #333;
         }
-        .login-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
+
+        .login-box input,
         .login-box button {
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            color: #333;
+            font-weight: normal;
+            transition: all 0.3s ease;
+        }
+
+        .login-box button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
             border: none;
             color: white;
             font-size: 16px;
-            border-radius: 5px;
             cursor: pointer;
         }
+
         .login-box button:hover {
-            background-color: #45a049;
+            background: linear-gradient(45deg, #45a049, #4CAF50);
         }
-        .error { color: red; text-align: center; }
+
+        /* Hover effect on text */
+        .hovered {
+            font-weight: bold !important;
+            color: #ff4500 !important;
+            font-size: 18px !important;
+        }
+
+        /* Custom dot */
+        #custom-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4500;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+        }
+
+        #custom-dot.active {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 </head>
 <body>
+
+    <div id="particles-js"></div>
+ <div id="welcome-container">
+  <div id="welcome-wrapper">
+    <span>Welcome to my website&nbsp;&nbsp;&nbsp;&nbsp;</span>
+  </div>
+</div>
+
     <div class="login-box">
         <h2>Login</h2>
-        <% if (error) { %>
-            <p class="error"><%= error %></p>
-        <% } %>
         <form action="/login" method="POST">
             <input type="text" name="username" placeholder="Username">
             <input type="password" name="password" placeholder="Password">
             <button type="submit">Login</button>
         </form>
     </div>
+
+    <div id="custom-dot"></div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Particles background
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 90 },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 2 }
+            }
+        });
+
+        const customDot = document.getElementById('custom-dot');
+        const loginBox = document.querySelector('.login-box');
+
+        // Move dot with mouse
+        loginBox.addEventListener('mousemove', (e) => {
+            customDot.style.left = `${e.clientX}px`;
+            customDot.style.top = `${e.clientY}px`;
+        });
+
+        // Add hover class on inputs/buttons
+        const interactiveElements = loginBox.querySelectorAll('input, button, h2');
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.classList.add('hovered');
+                customDot.classList.add('active');
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('hovered');
+                customDot.classList.remove('active');
+            });
+        });
+        const wrapper = document.getElementById('welcome-wrapper');
+const text = wrapper.innerHTML;
+
+// Duplicate the text enough times to fill the screen dynamically
+let repeatCount = Math.ceil(window.innerWidth / wrapper.offsetWidth) + 2;
+wrapper.innerHTML = text.repeat(repeatCount);
+    </script>
+
 </body>
 </html>

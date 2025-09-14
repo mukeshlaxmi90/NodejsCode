@@ -6,21 +6,25 @@
   <title><%= typeof title !== 'undefined' ? title : 'Node Js' %></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">       
   <link rel="stylesheet" href="/css/UDashboard.css">  
-  <link rel="stylesheet" href="/css/loader.css">
+  <link rel="stylesheet" href="/css/loader.css"> 
 </head>
 <body>
    <div id="loaderOverlay" class="loader-overlay">
   <div class="loader"></div>
 </div>
+ <header class="top-header">
+ <%- include('partials/header') %>
+ </header>
   <div class="layout">
     <%- include('partials/sidebar') %>
-    <main class="main">
+    <main class="main">    
       <%- body %>
     </main>
   </div>
    <script src="/js/ucscript.js"></script>
   <script src="/js/loader.js"></script>  
   <script>
+     
      (function() {
       let logoutTimer;
       function resetTimer() {
@@ -29,7 +33,6 @@
           window.location.href = "/logout";
         }, 60000); // 1 minute
       }
-
       // Detect activity
       window.onload = resetTimer;
       document.onmousemove = resetTimer;

@@ -169,7 +169,7 @@ footer {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: linear-gradient(45deg, #ff6a00, #ee0979);  /* fixed gradient */
+  background: linear-gradient(45deg, #ff6a00, #ee0979);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,13 +177,21 @@ footer {
   font-size: 20px;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  animation: spin 2s linear infinite; /* continuous rotation */
+  animation: spin 2s linear infinite, gradientShift 5s ease infinite;
   z-index: 1000;
 }
+
 @keyframes spin {
-  from { transform: translateY(-50%) rotate(0deg); }
-  to { transform: translateY(-50%) rotate(360deg); }
-} 
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+@keyframes gradientShift {
+  0%   { background: linear-gradient(45deg, #ff6a00, #ee0979); }
+  50%  { background: linear-gradient(45deg, #00c6ff, #0072ff); }
+  100% { background: linear-gradient(45deg, #ff6a00, #ee0979); }
+}
+
     .theme-options {
       position: fixed;
       right: 80px;

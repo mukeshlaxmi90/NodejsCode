@@ -1,6 +1,33 @@
-<header class="top-header">
-  <div class="sb-top">
-    <i class="fa-solid fa-bars sb-btn" id="toggleSidebar"></i>
-    <h2>Welcome, 🎉</h2>
-  </div>
-</header>
+  <style>
+    .top-header {
+    position: fixed;
+    top: 0;
+    left: 65px; /* Or less, depending on the desired left margin from sidebar */
+    right: 0;
+    height: 56px;
+    background: var(--sidebar-bg); /* Same color as sidebar or desired color */
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 10;
+    transition: left 0.3s ease;
+    border-bottom-left-radius: 12px; /* To give slight separation from sidebar */
+    
+}
+.back-btn {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    margin-right: 16px;
+    padding-left: 31px;
+}
+  </style>
+ <!-- 🔹 Top Header -->
+  
+     <div class="sb-top">        
+       <i class="fa-solid fa-bars sb-btn" id="toggleSidebar" style=" padding-left: 135px;"></i> 
+       <a href="/index">
+       <i class="fa-solid fa-arrow-left back-btn"></i>
+       </a>   
+        
+     </div>

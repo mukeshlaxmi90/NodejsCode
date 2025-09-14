@@ -82,5 +82,22 @@
   .settings:hover{background:rgba(255,255,255,.12)}
 
   /* MAIN */
-  .main{flex:1;padding:18px}
+ .main {
+    flex: 1;
+    padding: 76px 18px 18px 18px; /* Top padding accounts for header height + some spacing */
+}
   .card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+#toggleSidebar {
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.collapsed ~ .top-header .sb-top #toggleSidebar {
+        transform: translateX(-20px);
+    }
+    #toggleSidebar {
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed ~ .top-header #toggleSidebar {
+    transform: translateX(-20px);
+}
