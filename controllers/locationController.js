@@ -18,7 +18,7 @@ const saveLocationController = async (req, res) => {
     console.log("L6", id);
   } catch (err) {
     console.log("L7");
-    console.error("❌ Error saving location:", err);
+    console.error("❌Error saving location:", err);
     res.status(500).json({ error: "Failed to save location" });
   }
 };

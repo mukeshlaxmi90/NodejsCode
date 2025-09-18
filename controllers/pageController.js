@@ -6,6 +6,7 @@ exports.showIndex = (req, res) => {
     }
     res.render('index', {
         user: req.session.user,
+        role: req.session.user.role,   // 🔹 role pass karna zaroori hai
         title: "Main Dashboard",
         layout: false // agar layout nahi chahiye index me
     });
@@ -16,9 +17,10 @@ exports.showUserDashboard = (req, res) => {
         return res.redirect('/login'); // agar login nahi hua → login page
     }
     res.render('UserView/Dashboard', {
-        user: req.session.user,
+      user: req.session.user,
+        role: req.session.user.role,   // 🔹 role yaha bhi pass kar do
         title: "User Dashboard",
         layout: 'layout', // layout show karna chahiye
-         pageKey: 'Dashboard'
+        pageKey: 'Dashboard'
     });
 };

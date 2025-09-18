@@ -32,6 +32,7 @@ app.use(
 );
 // 🔒 Disable cache globally (moved UP)
 app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; // now every EJS view has access to `user`
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');

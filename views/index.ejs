@@ -12,12 +12,16 @@
     <header>
       <nav class="nav">
         <h3>Welcome, 🎉</h3>
+      
         <div class="nav-item">User
+           
           <div class="dropdown">
             <a href="/UDashboard">User Dashboard</a>
-          </div>
+          </div> 
         </div>
+        <% if (role !== 'admin') { %>
         <div class="nav-item">Contact</div>
+        <% } %>
       </nav>
       <div class="active-users" style="margin-left: auto;margin-right: 19px;">
         <h3>📊 Active Users: <span id="activeUsers">0</span></h3>
@@ -125,7 +129,6 @@
           'theme-cyan': 'linear-gradient(45deg, #17a2b8, #117a8b)',
           'theme-red': 'linear-gradient(45deg, #dc3545, #a71d2a)'
         };
-
         settingsIcon.style.background = themeColors[savedTheme];
       });
 
@@ -136,6 +139,9 @@
         window.location.href = "/logout";
       });
       history.pushState(null, null, location.href);
+
+
+
     </script>
 
   </body>

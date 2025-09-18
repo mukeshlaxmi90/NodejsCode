@@ -1,6 +1,7 @@
  <link rel="stylesheet" href="/css/widgets.css">
 <section class="metrics">
     <!-- <div class="metric-card clickable" onclick="window.location.href='/UDashboard'"> -->
+      <% if (user && user.role === 'admin') { %>
       <div class="metric-card clickable">
       <div class="metric-header">
         <h2 id="successRate"></h2>
@@ -9,7 +10,7 @@
       <p class="metric-sub">Dasboard</p>
       <div class="progress-bar"><div class="progress" id="successBar"></div></div>
     </div>
-
+     <% } %>
     <div class="metric-card clickable">
       <div class="metric-header">
         <h2 id="efficiency"></h2>
