@@ -47,6 +47,47 @@
     border-radius: 5px;
   }
 </style>
+<style>
+  .pagination-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end; /* align right */
+  align-items: center;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%; /* circle shape */
+  border: 1px solid #4CAF50;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #45a049;
+}
+
+.pagination button:disabled {
+  background-color: #ddd;
+  border-color: #ccc;
+  color: #888;
+  cursor: not-allowed;
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -84,6 +125,10 @@
       <% } %>
     </tbody>
   </table> 
+  <!-- ✅ Add pagination here -->
+<div class="pagination-container">
+  <div class="pagination" id="pagination"></div>
+</div>
   <!-- External JS file -->
 <script src="/js/dataview.js"></script>
 <script>

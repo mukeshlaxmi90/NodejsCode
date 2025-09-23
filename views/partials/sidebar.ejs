@@ -15,10 +15,10 @@
          <% if (user && user.role === 'admin') { %>
          <a href="" data-page="Dataview" data-page="dataf">Reports</a>
          <% } %>
-         <% if (user && user.role === 'admin') { %>
-          <a href="" data-page="entryform">Entry Form</a>
+         <% if (user && user.role === 'admin') { %>         
+          <a href="javascript:void(0)" onclick="window.location='/page/entryform'">Entry form</a>
           <% } %>
-          <a href="#">Activity</a>
+          <a href="javascript:void(0)" onclick="window.location='/page/datainsert'">Dinsert</a>
         </div>
       </div>        
       <div class="item has-children" data-accordion>

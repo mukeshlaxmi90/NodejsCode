@@ -23,10 +23,8 @@
     </main>
   </div>
    <script src="/js/ucscript.js"></script>
-  <script src="/js/loader.js"></script>  
-   
-  <script>
-     
+  <script src="/js/loader.js"></script>   
+  <script>     
      (function() {
       let logoutTimer;
       function resetTimer() {
@@ -43,5 +41,7 @@
       document.onscroll = resetTimer;
     })();
   </script>
+  <!-- Page-specific script inject (express-ejs-layouts keyword) -->
+  <%- typeof scripts !== 'undefined' ? scripts : '' %>
 </body>
 </html>

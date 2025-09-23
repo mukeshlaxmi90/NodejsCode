@@ -1,7 +1,12 @@
 const  userService  = require('../services/entryService');
 
 exports.showEntryForm = (req, res) => {
-     res.render('UserView/Entryform', { layout: false });
+     res.render('UserView/Entryform', 
+        { 
+         layout: 'layout', 
+          title: 'Transition Form',
+          scripts: '<script src="/js/entryform.js"></script>'
+        });
 };
 
 exports.saveUser = async (req, res) => {
@@ -14,7 +19,7 @@ exports.saveUser = async (req, res) => {
         console.log('After insert, result:', result);       
         // या अगर किसी specific route पर जाना है, तो:/ Success hone ke baad redirect:                      
            console.log("page se");
-          res.render('UserView/Entryform', { layout: 'layout',  success: true, message: 'Data saved successfully!' });         
+          res.render('UserView/Entryform', { layout: 'layout',  success: true, message: 'Data saved successfully!',scripts: '<script src="/js/entryform.js"></script>' });         
         /* return res.json({
             success: true,
             message: 'Data saved successfully',

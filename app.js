@@ -11,6 +11,8 @@ const pageRoutes = require('./routes/pageRoutes');
 const entryRoutes = require('./routes/entryRoutes');
 const viewRoutes = require('./routes/viewRoutes');
 const locationRoutes =require('./routes/locationRoutes');
+const dataiRoutes = require('./routes/datainsert');
+
 const { console } = require('inspector');
 
 const app = express();
@@ -54,11 +56,13 @@ app.use(authRoutes);
 app.use('/', pageRoutes);  // index/dashboard
 app.use('/page', entryRoutes); // entry form
 app.use('/page', viewRoutes); 
+app.use('/page', dataiRoutes); 
 // Index / dashboard route
 
 //Submit ke liye route hai ye
 app.use('/users', entryRoutes);
 app.use("/api", locationRoutes );
+
 
 // Logout
 app.get('/logout', (req, res) => {

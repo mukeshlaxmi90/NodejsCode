@@ -1,56 +1,83 @@
 // public/js/dataview.js
 function initDataView() {
   console.log("Dataview.js loaded ✅");
-
   const input = document.getElementById("searchInput");
   const table = document.getElementById("usersTable");
   const headers = table.querySelectorAll("th");
   const tbody = table.querySelector("tbody");
-
+  const paginationContainer = document.getElementById("pagination");
 
   if (!table) {
     console.warn("⚠️ usersTable not found in DOM, skipping dataview init");
     return;
   }
-  // ========================================================
-  // 1. 🔎 SEARCH FUNCTIONALITY
-  // ========================================================
-  if (input) {
-    input.addEventListener("keyup", function () {
-      const filter = input.value.toLowerCase().trim();
-      let visibleCount = 0;
-      const rows = tbody.querySelectorAll("tr");
 
-      rows.forEach(row => {
-        if (row.classList.contains("no-data") || row.classList.contains("no-match")) return;
-        const text = row.textContent.toLowerCase().replace(/\s+/g, " ").trim();
-        if (text.includes(filter)) {
-          row.style.display = "";
-          visibleCount++;
-        } else {
-          row.style.display = "none";
-        }
-      });
+  // ==========================
+  // VARIABLES
+  // ==========================
+  let currentPage = 1;
+  const rowsPerPage = 10;
+  let filteredRows = Array.from(tbody.querySelectorAll("tr")).filter(
+    row => !row.classList.contains("no-data")
+  );
 
-      let noMatchRow = tbody.querySelector(".no-match");
-      if (visibleCount === 0 && filter !== "") {
-        if (!noMatchRow) {
-          const tr = document.createElement("tr");
-          tr.classList.add("no-match");
-          tr.innerHTML = `<td colspan="100%" class="no-data">No matching records found</td>`;
-          tbody.appendChild(tr);
-        }
-      } else {
-        if (noMatchRow) noMatchRow.remove();
-      }
+  // ==========================
+  // UPDATE SERIAL NUMBERS
+  // ==========================
+  function updateSerialNumbers() {
+    filteredRows.forEach((row, index) => {
+      if (row.children[0]) row.children[0].textContent = index + 1;
     });
   }
-  // ========================================================
-  // 2. 🔼🔽 SORTING FUNCTIONALITY
-  // ========================================================
+  // ==========================
+  // SEARCH FUNCTIONALITY
+  // ==========================
+  if (input) {
+  input.addEventListener("keyup", function () {
+    const filter = input.value.toLowerCase().trim();
+
+    // Recalculate filteredRows
+    filteredRows = Array.from(tbody.querySelectorAll("tr")).filter(
+      row => !row.classList.contains("no-data")
+    );
+
+    let visibleCount = 0;
+
+    filteredRows.forEach(row => {
+      const text = row.textContent.toLowerCase().replace(/\s+/g, " ").trim();
+      if (text.includes(filter)) {
+        row.style.display = "";
+        visibleCount++;
+      } else {
+        row.style.display = "none";
+      }
+    });
+
+    let noMatchRow = tbody.querySelector(".no-match");
+    if (visibleCount === 0 && filter !== "") {
+      if (!noMatchRow) {
+        const tr = document.createElement("tr");
+        tr.classList.add("no-match");
+        tr.innerHTML = `<td colspan="100%" class="no-data">No matching records found</td>`;
+        tbody.appendChild(tr);
+      }
+      filteredRows = [];
+    } else {
+      if (noMatchRow) noMatchRow.remove();
+      // Keep only visible rows for pagination
+      filteredRows = Array.from(tbody.querySelectorAll("tr")).filter(
+        row => !row.classList.contains("no-data") && row.style.display !== "none"
+      );
+    }
+    currentPage = 1; // reset page to first
+    renderPage();
+  });
+}
+  // ==========================
+  // SORTING FUNCTIONALITY
+  // ==========================
   headers.forEach((header, index) => {
     let ascending = true;
-
     header.addEventListener("click", () => {
       const rowsArray = Array.from(tbody.querySelectorAll("tr"))
         .filter(r => !r.classList.contains("no-data") && !r.classList.contains("no-match") && r.style.display !== "none");
@@ -70,12 +97,15 @@ function initDataView() {
 
       headers.forEach(h => h.classList.remove("sorted-asc", "sorted-desc"));
       header.classList.add(ascending ? "sorted-asc" : "sorted-desc");
+
+      updateSerialNumbers();
+      renderPage();
     });
   });
 
-  // ========================================================
-  // 3. ↔️ COLUMN REORDER FUNCTIONALITY
-  // ========================================================
+  // ==========================
+  // COLUMN REORDER FUNCTIONALITY
+  // ==========================
   let draggedColIndex;
 
   headers.forEach((header, index) => {
@@ -91,9 +121,7 @@ function initDataView() {
       e.target.classList.remove("dragging");
     });
 
-    header.addEventListener("dragover", e => {
-      e.preventDefault();
-    });
+    header.addEventListener("dragover", e => e.preventDefault());
 
     header.addEventListener("drop", e => {
       e.preventDefault();
@@ -114,9 +142,10 @@ function initDataView() {
       }
     }
   }
-  // ========================================================
-  // 4. ↕️ ROW REORDER FUNCTIONALITY
-  // ========================================================
+
+  // ==========================
+  // ROW REORDER FUNCTIONALITY
+  // ==========================
   let draggedRow;
 
   tbody.querySelectorAll("tr").forEach(row => {
@@ -130,7 +159,9 @@ function initDataView() {
 
     row.addEventListener("dragend", e => {
       row.classList.remove("dragging");
+      updateSerialNumbers();
     });
+
     row.addEventListener("dragover", e => {
       e.preventDefault();
       const targetRow = e.target.closest("tr");
@@ -145,7 +176,61 @@ function initDataView() {
       }
     });
   });
+
+  // ==========================
+  // PAGINATION
+  // ==========================
+  function renderPagination() {
+    paginationContainer.innerHTML = "";
+
+    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+    if (totalPages <= 1) return;
+
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "⬅️";
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener("click", () => {
+      currentPage--;
+      renderPage();
+    });
+    paginationContainer.appendChild(prevBtn);
+
+    // Page number buttons
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add("active-page");
+      btn.addEventListener("click", () => {
+        currentPage = i;
+        renderPage();
+      });
+      paginationContainer.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "➡️";
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener("click", () => {
+      currentPage++;
+      renderPage();
+    });
+    paginationContainer.appendChild(nextBtn);
+  }
+
+  function renderPage() {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = currentPage * rowsPerPage;
+
+    filteredRows.forEach((row, index) => {
+      row.style.display = index >= start && index < end ? "" : "none";
+    });
+
+    updateSerialNumbers();
+    renderPagination();
+  }
+
+  // INITIAL RENDER
+  renderPage();
 }
+
 document.addEventListener("DOMContentLoaded", initDataView);
-
-
