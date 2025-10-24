@@ -2,16 +2,16 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
-
 const http = require('http');
 const { Server }= require('socket.io');
-
 const authRoutes = require('./routes/authRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 const entryRoutes = require('./routes/entryRoutes');
 const viewRoutes = require('./routes/viewRoutes');
 const locationRoutes =require('./routes/locationRoutes');
 const dataiRoutes = require('./routes/datainsert');
+const SIPCal = require('./routes/SIPCalRoutes');
+const SImCal = require('./routes/SimpleintRoutes');
 
 const { console } = require('inspector');
 
@@ -57,11 +57,15 @@ app.use('/', pageRoutes);  // index/dashboard
 app.use('/page', entryRoutes); // entry form
 app.use('/page', viewRoutes); 
 app.use('/page', dataiRoutes); 
+app.use('/page', SIPCal);
+app.use('/page', SImCal);
+
 // Index / dashboard route
 
 //Submit ke liye route hai ye
 app.use('/users', entryRoutes);
 app.use("/api", locationRoutes );
+app.use("/api",dataiRoutes);
 
 
 // Logout

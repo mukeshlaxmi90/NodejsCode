@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIP & Lumpsum Calculator</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="/css/sip.css">
+</head>
+<body>
+<div class="calculator">
+  <div class="inputs">
+    <h2 id="title">💰 SIP Calculator</h2>
+    <div class="toggle">
+      <button id="sipBtn" class="active">SIP</button>
+      <button id="lumpBtn">Lumpsum</button>
+    </div>
+    <label id="amountLabel">
+      Monthly Investment (₹):
+      <input type="number" id="amountInput" min="1000" max="100000" step="500" value="25000">
+    </label>
+    <input type="range" id="amount" min="1000" max="100000" step="500" value="25000">
+    <label>
+      Expected Return Rate (p.a %):
+      <input type="number" id="rateInput" min="1" max="20" step="0.1" value="12">
+    </label>
+    <input type="range" id="rate" min="1" max="20" step="0.1" value="12">
+    <label>
+      Time Period (Years):
+      <input type="number" id="yearsInput" min="1" max="50" step="1" value="26">
+    </label>
+    <input type="range" id="years" min="1" max="50" step="1" value="26">
+
+    <div class="results-inline">
+      <div class="result-item">Invested Amount: ₹<b id="invested"></b></div>
+      <div class="result-item">Estimated Returns: ₹<b id="returns"></b></div>
+      <div class="result-item">Total Value: ₹<b id="total"></b></div>
+    </div>
+  </div>
+
+  <div class="chart-area">
+    <canvas id="chart" width="200" height="200"></canvas>
+    <button class="invest-btn">INVEST NOW</button>
+  </div>
+</div>
+<script>
+const amountRange = document.getElementById('amount');
+const rateRange = document.getElementById('rate');
+const yearsRange = document.getElementById('years');
+const amountInput = document.getElementById('amountInput');
+const rateInput = document.getElementById('rateInput');
+const yearsInput = document.getElementById('yearsInput');
+
+const investedEl = document.getElementById('invested');
+const returnsEl = document.getElementById('returns');
+const totalEl = document.getElementById('total');
+const title = document.getElementById('title');
+const amountLabel = document.getElementById('amountLabel');
+
+const sipBtn = document.getElementById('sipBtn');
+const lumpBtn = document.getElementById('lumpBtn');
+let mode = 'sip';
+// Chart
+const ctx = document.getElementById('chart').getContext('2d');
+let chart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Invested Amount', 'Est. Returns'],
+    datasets: [{
+      data: [0, 0],
+      backgroundColor: ['#d3e5ff', '#4c6ef5'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    plugins: { legend: { position: 'bottom' } }
+  }
+});
+function formatNumber(x) {
+  return x.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+function calculate() {
+  const P = parseFloat(amountInput.value);
+  const rAnnual = parseFloat(rateInput.value);
+  const nYears = parseFloat(yearsInput.value);
+  amountRange.value = P;
+  rateRange.value = rAnnual;
+  yearsRange.value = nYears;
+  let totalInvested, profit, FV;
+
+  if (mode === 'sip') {
+    const n = nYears * 12;
+    const r = rAnnual / 100 / 12;
+    FV = P * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+    totalInvested = P * n;
+  } else {
+    const r = rAnnual / 100;
+    FV = P * Math.pow(1 + r, nYears);
+    totalInvested = P;
+  }
+  profit = FV - totalInvested;
+  investedEl.textContent = formatNumber(totalInvested);
+  returnsEl.textContent = formatNumber(profit);
+  totalEl.textContent = formatNumber(FV);
+  chart.data.datasets[0].data = [totalInvested, profit];
+  chart.update();
+}
+
+// Events (text + range dono work kare)
+[amountInput, rateInput, yearsInput].forEach(el => {
+  el.addEventListener('input', calculate);
+  el.addEventListener('change', calculate);
+});
+[amountRange, rateRange, yearsRange].forEach(el => {
+  el.addEventListener('input', e => {
+    if (el === amountRange) amountInput.value = e.target.value;
+    if (el === rateRange) rateInput.value = e.target.value;
+    if (el === yearsRange) yearsInput.value = e.target.value;
+    calculate();
+  });
+});
+// Toggle buttons
+sipBtn.addEventListener('click', () => {
+  mode = 'sip';
+  sipBtn.classList.add('active');
+  lumpBtn.classList.remove('active');
+  title.textContent = '💰 SIP Calculator';
+  amountLabel.firstChild.textContent = 'Monthly Investment (₹): ';
+  calculate();
+});
+lumpBtn.addEventListener('click', () => {
+  mode = 'lumpsum';
+  lumpBtn.classList.add('active');
+  sipBtn.classList.remove('active');
+  title.textContent = '💰 Lumpsum Calculator';
+  amountLabel.firstChild.textContent = 'Total Investment (₹): ';
+  calculate();
+});
+// Start
+calculate();
+</script>
+</body>
+</html>

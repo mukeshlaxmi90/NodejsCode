@@ -20,6 +20,5 @@ console.log('upp',username,password);
   if (password !== user.password) {
     throw new Error("Invalid password");
   }
-
   return { id: user.id, name: user.username, role: user.role };
 };

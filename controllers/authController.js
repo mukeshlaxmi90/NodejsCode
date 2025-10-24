@@ -7,13 +7,10 @@ exports.showLogin = (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
-
   try {
     const user = await authService.login(username, password);
-
     // ✅ Save to session
-    req.session.user = user;
-
+     req.session.user = user;
     // Redirect role ke hisaab se
     if (user.role === "admin") {
        return res.redirect('/index'); // ya /dashboard       

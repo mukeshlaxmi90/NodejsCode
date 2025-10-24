@@ -1,38 +1,252 @@
+<!-- <button id="loadBtn">Load Users</button>
+<pre id="result"></pre>
+
+<script>
+document.getElementById("loadBtn").addEventListener("click", async () => {
+  try {
+    const res = await fetch("/api/users"); // router से match
+    const data = await res.json();
+    document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    document.getElementById("result").textContent = "Error: " + err;
+  }
+});
+</script> -->
+ <!-- <pre id="result">
+<%= JSON.stringify(users, null, 2) %>
+</pre>  -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transition Form</title>
-  <link rel="stylesheet" href="/css/entryform.css">
-  <link rel="stylesheet" href="/css/loader.css">
-  <link rel="stylesheet" href="/css/toast.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>Users Table</title>
+  <style>
+    h2 { text-align: center; margin-bottom: 20px; }
+    .search-box { margin-bottom: 15px; text-align: right; }
+    .search-box input {
+      padding: 8px; width: 250px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #4CAF50; color: white; position: sticky; top: 0; z-index: 2; text-align: center; }
+    tr:nth-child(even) { background: #f2f2f2; }
+    tr:hover { background: #eaf3ff; }
+    .no-data { text-align: center; font-style: italic; color: #666; }
+    th.sorted-asc::after { content: " ⬆️"; }
+    th.sorted-desc::after { content: " ⬇️"; }
+    th.dragging { opacity: 0.4; background: #f0f0f0;}
+ 
+    .top-bar {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-group button {
+      padding: 8px 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-group button:hover {
+      background: #45a049;
+    }
+    .top-bar input {
+      padding: 8px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .pagination-container {
+      margin-top: 15px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pagination button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #4CAF50;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+    .pagination button:hover {
+      background-color: #45a049;
+    }
+    .pagination button:disabled {
+      background-color: #ddd;
+      border-color: #ccc;
+      color: #888;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
-<!-- Toast -->
-  <% if (typeof message !== "undefined" && message) { %>
-    <div id="toast" class="toast <%= success ? 'toast-success' : 'toast-error' %>">
-      <%= message %>
+  <h2>Users List</h2>
+  
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="btn-group">
+      <button onclick="downloadExcel()">⬇️ Download Excel</button>
     </div>
-  <% } %>
-<form class="user-form" action="" method="POST" onsubmit="showLoader()">   
-  <div class="form-row">
-    <div class="form-group">
-      <label for="name">Name</label>
-      <input type="text" id="name" name="name" />
-    </div>
-    <div class="form-group">
-      <label for="dob">DOB</label>
-      <input type="date" id="dob" name="dob"/>
-    </div>
-    <div class="form-group">
-      <label for="age">Age</label>
-      <input type="number"  id="age" name="age" readonly/>
-    </div>
+    <input type="text" id="searchInput" placeholder="Search users...">
   </div>
-</form>
-<script src="/js/entryform.js"></script>
 
+  <!-- Users Table -->
+  <table id="usersTable">
+    <thead>
+      <% 
+      // ========== Helper functions ==========
+      function countLeaves(cols) {
+        return cols.reduce((sum, col) => {
+          if (typeof col === "string") return sum + 1;
+          return sum + countLeaves(col.children);
+        }, 0);
+      }
+
+      function getMaxDepth(cols) {
+        return cols.reduce((max, col) => {
+          if (typeof col === "string") return Math.max(max, 1);
+          return Math.max(max, 1 + getMaxDepth(col.children));
+        }, 1);
+      }
+
+      function renderHeaders(cols, depth=0) {
+      %>
+        <tr>
+          <% cols.forEach(col => { %>
+            <% if (typeof col === "string") { %>
+              <th rowspan="<%= maxDepth - depth %>">
+                <%= col.split('.').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') %>
+              </th>
+            <% } else { %>
+              <th colspan="<%= countLeaves(col.children) %>"><%= col.group %></th>
+            <% } %>
+          <% }) %>
+        </tr>
+        <% if (cols.some(c => typeof c !== "string")) { %>
+          <%= renderHeaders(cols.flatMap(c => typeof c === "string" ? [] : c.children), depth+1) %>
+        <% } %>
+      <% } %>
+
+      <% 
+      // ========== Render headers ==========
+      const maxDepth = getMaxDepth(columns);
+      renderHeaders(columns);
+      %>
+    </thead>
+
+    <tbody>
+      <% if (users.length > 0) { %>
+        <% users.forEach(function(user){ %>
+          <tr>
+            <% 
+            function renderCells(cols, obj) {
+              cols.forEach(col => {
+                if (typeof col === "string") {
+                  let val = col.split('.').reduce((acc, k) => acc ? acc[k] : "", obj);
+            %>
+                  <td><%= val %></td>
+            <%   } else {
+                  renderCells(col.children, obj);
+                }
+              });
+            }
+            renderCells(columns, user); 
+            %>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr class="no-data"><td colspan="100%">No users found</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination-container">
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- External JS -->
+  <script src="/js/dataview.js"></script>
+
+  <script>
+  async function downloadExcel() {
+    let table = document.getElementById("usersTable");
+    let workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet("Users");
+
+    // 👉 Add header row
+    let headers = [];
+    table.querySelectorAll("thead tr:last-child th").forEach(th => headers.push(th.innerText));
+    worksheet.addRow(headers);
+
+    // 👉 Add table rows
+    table.querySelectorAll("tbody tr").forEach(tr => {
+      let rowData = [];
+      tr.querySelectorAll("td").forEach(td => rowData.push(td.innerText));
+      if(rowData.length > 0) worksheet.addRow(rowData);
+    });
+
+    // 👉 Style header
+    worksheet.getRow(1).eachCell(cell => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4CAF50' }
+      };
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
+
+    // 👉 Auto filter
+    worksheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: headers.length }
+    };
+
+    // 👉 Adjust column width
+    worksheet.columns.forEach(col => {
+      let maxLength = 10;
+      col.eachCell({ includeEmpty: true }, cell => {
+        maxLength = Math.max(maxLength, (cell.value ? cell.value.toString().length : 0));
+      });
+      col.width = maxLength + 2;
+    });
+    // 👉 Download
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "users.xlsx");
+  }
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
